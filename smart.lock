@@ -1,0 +1,38 @@
+{
+  "meteor": {},
+  "dependencies": {
+    "basePackages": {
+      "foundation-5": {},
+      "iron-router": {},
+      "npm": {},
+      "cron-tick": {}
+    },
+    "packages": {
+      "foundation-5": {
+        "git": "https://github.com/menuet/meteor-foundation-5.git",
+        "tag": "v5.0.3.5",
+        "commit": "8bc2219c0c7f3d68ca0a8d15a066db55b52f0aa4"
+      },
+      "iron-router": {
+        "git": "https://github.com/EventedMind/iron-router.git",
+        "tag": "v0.6.2",
+        "commit": "ce56e58b45624dce992490f3a1c10f10d3948bae"
+      },
+      "npm": {
+        "git": "https://github.com/arunoda/meteor-npm.git",
+        "tag": "v0.2.6",
+        "commit": "177ab6118de5bf8cffb19481343d5762ff7a2aaf"
+      },
+      "cron-tick": {
+        "git": "https://github.com/tmeasday/meteor-cron.git",
+        "tag": "v0.0.4",
+        "commit": "44cff9116af510fe53704fdeeff57c444ceb75ba"
+      },
+      "jquery": {
+        "git": "https://github.com/nrafter/meteor-jquery.git",
+        "tag": "v2.0.3",
+        "commit": "8e8b556f39e1549d03abeebcc2d93083670ae200"
+      }
+    }
+  }
+}

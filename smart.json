@@ -1,0 +1,8 @@
+{
+  "packages": {
+    "foundation-5": {},
+    "iron-router": {},
+    "npm": {},
+    "cron-tick": {}
+  }
+}

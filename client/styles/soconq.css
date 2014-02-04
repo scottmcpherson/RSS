@@ -1,0 +1,39 @@
+/* CSS declarations go here */
+.sidebar {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width : 280px;
+	padding: 20px;
+	background: #EFEFEF;
+}
+.main {
+	margin-left: 280px;
+}
+.main {
+	padding: 20px;
+}
+.feed {
+	padding: 0 0 0 20px;
+	border-bottom: 1px solid #ececec;
+	
+}
+.feed h6 {
+	color: #666666;
+	white-space:nowrap; 
+	overflow: hidden;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.feed h6:hover{
+	color: #000;
+	cursor: pointer;
+}
+.feed-summary {
+	display: none;
+}
