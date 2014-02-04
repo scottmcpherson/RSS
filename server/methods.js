@@ -44,7 +44,7 @@ Meteor.methods({
 
 
 		var fetchedUrls = AllowedUrls.find({}, {fields: {feedUrl: 1}});
-		
+
 
 		fetchedUrls.forEach(function(feed) {
 			console.log(feed.feedUrl);
@@ -62,7 +62,7 @@ Meteor.methods({
 			.on('readable', function () {
 				// do something else, then do the next thing
 				var stream = this, item;
-				
+
 				var newFeeds = true;
 				while (item = stream.read()) {
 
@@ -91,7 +91,7 @@ Meteor.methods({
 						// 	console.log("no more new feeds");
 						// }
 					});
-					
+
 
 					// if (lastInsertedFeed.title !== item.title) {
 					// 	console.log( 'Got article new: %s', item.title || item.description );
@@ -99,15 +99,15 @@ Meteor.methods({
 					// }
 					// console.log("Getting ready to break");
 					// break;
-						
-					
+
+
 					// console.log( 'article description: ', item.summary );
 					// console.log( 'article link: ', item.link );
 					// console.log( 'article date: ', item.pubdate );
 					// console.log( 'article image url: ' + item.media );
 				}
 			});
-		});	
+		});
 	},
 	addFeed: function() {
 		try {
@@ -115,12 +115,12 @@ Meteor.methods({
 			var allowedUrls = AllowedUrls.find();
 
 			allowedUrls.forEach(function(url) {
-			
+
 				request(url.feedUrl)
 				.pipe(new FeedParser())
 				.on('error', function(error) {
 				})// always handle errors
-				.on('meta', function (meta) {	
+				.on('meta', function (meta) {
 				})// do something
 				.on('readable', function () {
 					//===============================================================
@@ -162,9 +162,9 @@ Meteor.methods({
 									pubDate: item.pubdate
 								});
 								console.log("brand new feed inserted");
-							}	
+							}
 						}
-						
+
 					}).run();
 				});
 			});
@@ -175,58 +175,53 @@ Meteor.methods({
 
 	addFeeds: function() {
     try {
- 
       var allowedUrls = AllowedUrls.find();
- 
+      var items = [];
+      var Future  = Npm.require('fibers/future');
+      var future = new Future();
       allowedUrls.forEach(function(url) {
- 
         request(url.feedUrl)
         .pipe(new FeedParser())
         .on('error', function(error) {
         })// always handle errors
-        .on('meta', function (meta) {   
+        .on('meta', function (meta) {
         })// do something
         .on('readable', function () {
           console.log("onreadable called");
-          //===============================================================
-          //  Get the last inserted feed
-          // iterate through new fetched feeds
-          //  check if the feed mathces last inserted feed
-          //      if it does NOT, save it
-          //===============================================================
           var stream = this, item;
-          var lastFeedInserted = Feeds.findOne({ feedID: url._id });
-          var bool = true;
- 
-            while (item = stream.read() && bool) {
-              console.log("bool:      ", bool);
-              if (lastFeedInserted) {
-                if (lastFeedInserted.title !== item.title) {
-                  console.log("processFeed");
-                  var processFeedOptions = {
-                    item: item,
-                    lastFeedInserted: lastFeedInserted
-                  }
-                  Meteor.bindEnvironment(function(processFeedOptions){
-                    console.log("sucess!!!, feed iserted");
-                    processFeed(processFeedOptions);
-                  }, function(e){
-                    throw e;
-                  })
- 
-                } else {
-                  console.log("bool is being set to false");
-                  bool = false;
-                  break;
-                }
-              } else {
-                Feeds.insert({
-                  title: item.title
-                });
-                console.log("brand new feed inserted");
-              }   
+          while (item = stream.read()) {
+            items.push(item);
+          }
+        })
+        .on('end', function () {
+          future.return(items);
+        });
+        //===============================================================
+        //  Get the last inserted feed
+        // iterate through new fetched feeds
+        //  check if the feed mathces last inserted feed
+        //      if it does NOT, save it
+        //===============================================================
+        var item;
+        var lastFeedInserted = Feeds.findOne({ feedID: url._id });
+        var feed_items = future.wait();
+
+        _.each(feed_items, function(item){
+          if (lastFeedInserted) {
+            if (lastFeedInserted.title !== item.title) {
+              console.log("processFeed");
+              var processFeedOptions = {
+                item: item,
+                lastFeedInserted: lastFeedInserted
+              }
+              processFeed(processFeedOptions);
             }
- 
+          } else {
+            Feeds.insert({
+              title: item.title
+            });
+            console.log("brand new feed inserted");
+          }
         });
       });
     } catch(e) {
